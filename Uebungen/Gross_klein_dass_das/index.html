@@ -1,943 +1,2370 @@
-const rounds = [
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-/* =====================================================
-   RUNDE 1
-===================================================== */
+<title>Deutsch-Training – Groß- und Kleinschreibung & das/dass</title>
 
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    background: linear-gradient(135deg, #dff1ff, #eee5ff);
+    color: #263238;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 950px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* HEADER */
+
+header {
+    background: white;
+    border-radius: 24px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    margin-bottom: 18px;
+}
+
+header h1 {
+    margin: 0 0 10px;
+    color: #315c9b;
+    font-size: 2rem;
+}
+
+header p {
+    margin: 7px;
+    line-height: 1.5;
+}
+
+/* FORTSCHRITT */
+
+.progress-box {
+    background: white;
+    border-radius: 18px;
+    padding: 15px 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    color: #315c9b;
+    margin-bottom: 8px;
+}
+
+.progress {
+    width: 100%;
+    height: 14px;
+    background: #e1e7ef;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 5%;
+    background: linear-gradient(90deg, #4c8edb, #7664d9);
+    transition: width 0.4s;
+}
+
+/* RUNDENPUNKTE */
+
+.round-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.dot {
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    background: #dce3eb;
+    font-size: 0.7rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dot.current {
+    background: #4c8edb;
+    color: white;
+}
+
+.dot.done {
+    background: #61b477;
+    color: white;
+}
+
+/* AUFGABENKARTE */
+
+.card {
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.09);
+}
+
+.card h2 {
+    color: #315c9b;
+    margin-top: 0;
+}
+
+.instruction {
+    background: #eef6ff;
+    border-left: 5px solid #4c8edb;
+    border-radius: 10px;
+    padding: 15px 17px;
+    margin-bottom: 25px;
+    line-height: 1.65;
+}
+
+/* SÄTZE */
+
+.sentence {
+    font-size: 1.2rem;
+    line-height: 2.8;
+    margin: 12px 0;
+}
+
+.sentence-number {
+    display: inline-block;
+    background: #315c9b;
+    color: white;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    text-align: center;
+    line-height: 28px;
+    font-size: 0.85rem;
+    margin-right: 8px;
+}
+
+/* HINWEISWORT */
+
+.hint {
+    color: #666;
+    font-size: 0.92rem;
+    margin-right: 4px;
+    background: #f1f5fa;
+    padding: 4px 7px;
+    border-radius: 7px;
+    display: inline-block;
+}
+
+.hint .article {
+    color: #315c9b;
+    font-weight: bold;
+}
+
+/* EINGABEFELDER */
+
+input.answer {
+    width: 105px;
+    padding: 8px 6px;
+    border: 2px solid #b8c9dc;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 1rem;
+    text-align: center;
+    background: #fafcff;
+    transition: 0.2s;
+}
+
+input.answer:focus {
+    outline: none;
+    border-color: #4c8edb;
+    box-shadow: 0 0 0 3px rgba(76,142,219,0.15);
+}
+
+input.correct {
+    border-color: #42a65c;
+    background: #edf9ef;
+}
+
+input.wrong {
+    border-color: #db5b5b;
+    background: #fff0f0;
+}
+
+/* BUTTONS */
+
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 13px 24px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.check {
+    background: #4c8edb;
+    color: white;
+}
+
+.check:hover {
+    background: #3978c0;
+    transform: translateY(-1px);
+}
+
+.next {
+    display: none;
+    background: #52a86d;
+    color: white;
+    margin-left: 8px;
+}
+
+.next:hover {
+    background: #418c59;
+}
+
+/* FEEDBACK */
+
+.feedback {
+    display: none;
+    margin-top: 25px;
+    padding: 18px;
+    border-radius: 14px;
+    line-height: 1.6;
+}
+
+.feedback.success {
+    display: block;
+    background: #eaf8ee;
+    border: 2px solid #79c58b;
+    color: #246437;
+}
+
+.feedback.partial {
+    display: block;
+    background: #fff8e6;
+    border: 2px solid #e5c766;
+    color: #71590c;
+}
+
+.feedback.error {
+    display: block;
+    background: #fff0f0;
+    border: 2px solid #e29a9a;
+    color: #7b2929;
+}
+
+.explanation {
+    background: white;
+    border-left: 4px solid #db7777;
+    border-radius: 9px;
+    padding: 12px 15px;
+    margin-top: 12px;
+}
+
+.explanation strong {
+    color: #7b2929;
+}
+
+.rule {
+    margin-top: 8px;
+    padding: 10px;
+    background: #fff8f8;
+    border-radius: 6px;
+}
+
+/* GESAMTAUSWERTUNG */
+
+.result {
+    display: none;
+    background: white;
+    border-radius: 24px;
+    padding: 35px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.09);
+}
+
+.result h2 {
+    color: #315c9b;
+    font-size: 2.2rem;
+}
+
+.final-score {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: #4c8edb;
+    margin: 20px;
+}
+
+.final-message {
+    max-width: 700px;
+    margin: auto;
+    font-size: 1.15rem;
+    line-height: 1.7;
+}
+
+.restart {
+    margin-top: 25px;
+    background: #7664d9;
+    color: white;
+}
+
+.restart:hover {
+    background: #6150bc;
+}
+
+@media(max-width:650px) {
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .sentence {
+        font-size: 1.05rem;
+    }
+
+    input.answer {
+        width: 85px;
+    }
+
+    .next {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+<header>
+
+    <h1>
+        📚 Deutsch-Training
+    </h1>
+
+    <p>
+        <strong>
+            Groß- und Kleinschreibung & „das“ oder „dass“
+        </strong>
+    </p>
+
+    <p>
+        Zeig, was du kannst! 💪
+    </p>
+
+    <p>
+        In jedem Satz steht der Hauptsatz zuerst.
+        Danach folgt der Nebensatz.
+    </p>
+
+</header>
+
+
+<div class="progress-box">
+
+    <div class="progress-info">
+
+        <span id="roundText">
+            Runde 1 von 20
+        </span>
+
+        <span id="scoreText">
+            Punkte: 0
+        </span>
+
+    </div>
+
+
+    <div class="progress">
+
+        <div
+            class="progress-bar"
+            id="progressBar">
+        </div>
+
+    </div>
+
+
+    <div
+        class="round-dots"
+        id="roundDots">
+    </div>
+
+</div>
+
+
+<div
+    class="card"
+    id="exerciseCard">
+
+    <h2 id="roundTitle">
+        Runde 1
+    </h2>
+
+
+    <div class="instruction">
+
+        <strong>So geht's:</strong>
+
+        <br><br>
+
+        Fülle die vier Lücken aus.
+
+        <br>
+
+        Die <strong>Satzzeichen sind bereits vorgegeben</strong>.
+
+        <br>
+
+        Bei Wörtern in Klammern musst du auf die
+        <strong>Groß- und Kleinschreibung</strong> achten.
+
+        <br>
+
+        Bei Nomen steht zusätzlich der passende
+        <strong>Artikel</strong> in der Klammer.
+
+        <br>
+
+        Bei einer freien Lücke entscheidest du:
+        <strong>das oder dass?</strong>
+
+    </div>
+
+
+    <div id="sentences"></div>
+
+
+    <button
+        class="check"
+        id="checkButton"
+        onclick="checkAnswers()">
+
+        ✓ Antworten prüfen
+
+    </button>
+
+
+    <button
+        class="next"
+        id="nextButton"
+        onclick="nextRound()">
+
+        Nächste Runde →
+
+    </button>
+
+
+    <div
+        id="feedback"
+        class="feedback">
+    </div>
+
+</div>
+
+
+<div
+    class="result"
+    id="result">
+
+    <h2>
+        🎉 Geschafft!
+    </h2>
+
+    <p>
+        Du hast alle 20 Runden bearbeitet!
+    </p>
+
+
+    <div
+        class="final-score"
+        id="finalScore">
+
+        0 Punkte
+
+    </div>
+
+
+    <div
+        class="final-message"
+        id="finalMessage">
+    </div>
+
+
+    <button
+        class="restart"
+        onclick="restart()">
+
+        🔄 Neue Aufgaben spielen
+
+    </button>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   AUFGABENPOOL
+
+   Es gibt mehr als 20 Aufgaben.
+
+   Bei jedem Durchlauf werden 20 verschiedene Aufgaben
+   zufällig ausgewählt.
+
+   Jede Aufgabe enthält genau vier Lücken:
+
+   - Lücke 1: Groß-/Kleinschreibung
+   - Lücke 2: das/dass
+   - Lücke 3: Groß-/Kleinschreibung
+   - Lücke 4: das/dass
+
+   Dadurch gibt es bei jedem Durchlauf eine andere Mischung.
+========================================================= */
+
+
+const taskPool = [
+
+/* 1 */
 {
-    sentences: [
-        {
-            text: "Am Morgen"
-        },
-        {
-            type: "case",
-            word: "frühstücken",
-            article: "das"
-        },
-        {
-            text: "wir gemeinsam,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "bevor die Schule beginnt."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "Frühstücken",
-            type: "substantiviertes Verb",
-            explanation:
-                "„Frühstücken“ bezeichnet hier eine Tätigkeit und wird als Nomen gebraucht.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        },
-        {
-            answer: "das",
-            type: "Artikel",
-            explanation:
-                "Hier gehört „das“ zu einem Nomen.",
-            rule:
-                "Der Artikel „das“ wird mit einem einfachen s geschrieben."
-        }
+    id: 1,
+    parts: [
+        {text:"Nach dem"},
+        {type:"case", hintArticle:"das", hint:"lesen", answer:"Lesen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Lesen“ bezeichnet hier eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"gehen wir spazieren, obwohl"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Wetter“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"schön", answer:"schöne",
+         wordType:"Adjektiv",
+         explanation:"„schöne“ beschreibt das Nomen „Wetter“.",
+         rule:"Adjektive werden kleingeschrieben, wenn sie ein Nomen beschreiben."},
+        {text:"Wetter heute ist."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 2
-===================================================== */
-
+/* 2 */
 {
-    sentences: [
-        {
-            text: "Lisa findet"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "Schwimmen Spaß macht,"
-        },
-        {
-            text: "weil"
-        },
-        {
-            type: "case",
-            word: "trainieren",
-            article: "das"
-        },
-        {
-            text: "ihre Ausdauer stärkt."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass Schwimmen Spaß macht“ ist ein Nebensatz.",
-            rule:
-                "Die Konjunktion „dass“ leitet einen Nebensatz ein und wird mit ss geschrieben."
-        },
-        {
-            answer: "Trainieren",
-            type: "substantiviertes Verb",
-            explanation:
-                "„Trainieren“ bezeichnet eine Tätigkeit.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        }
+    id: 2,
+    parts: [
+        {text:"Tom weiß"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"Die Konjunktion „dass“ wird mit ss geschrieben."},
+        {text:"seine Freundin kommt, bevor"},
+        {type:"case", hintArticle:"das", hint:"warten", answer:"Warten",
+         wordType:"substantiviertes Verb",
+         explanation:"„Warten“ bezeichnet hier eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"beginnt."},
+        {type:"case", hintArticle:"das", hint:"lang", answer:"lange",
+         wordType:"Adjektiv",
+         explanation:"„lange“ beschreibt, wie das Warten ist.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:""}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 3
-===================================================== */
-
+/* 3 */
 {
-    sentences: [
-        {
-            text: "Nach dem Unterricht"
-        },
-        {
-            type: "case",
-            word: "spielen",
-            article: "das"
-        },
-        {
-            text: "die Kinder draußen,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "das Wetter schön ist."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "Spielen",
-            type: "substantiviertes Verb",
-            explanation:
-                "Nach „dem“ wird das Verb hier als Nomen gebraucht.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        },
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass das Wetter schön ist“ ist ein Nebensatz.",
-            rule:
-                "„dass“ leitet einen Nebensatz ein."
-        }
+    id: 3,
+    parts: [
+        {text:"Beim"},
+        {type:"case", hintArticle:"das", hint:"schreiben", answer:"Schreiben",
+         wordType:"substantiviertes Verb",
+         explanation:"„Schreiben“ steht nach „beim“ und wird als Nomen gebraucht.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"merkt Lisa,"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass Lisa die Aufgabe versteht“ ist ein Nebensatz.",
+         rule:"„dass“ leitet einen Nebensatz ein."},
+        {text:"sie"},
+        {type:"case", hintArticle:"das", hint:"wichtig", answer:"Wichtige",
+         wordType:"substantiviertes Adjektiv",
+         explanation:"„Wichtige“ wird hier wie ein Nomen gebraucht.",
+         rule:"Substantivierte Adjektive werden großgeschrieben."},
+        {text:"versteht."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 4
-===================================================== */
-
+/* 4 */
 {
-    sentences: [
-        {
-            text: "Der Lehrer erklärt"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "die Aufgabe leicht ist,"
-        },
-        {
-            text: "weil"
-        },
-        {
-            type: "case",
-            word: "verstehen",
-            article: "das"
-        },
-        {
-            text: "dann leichter fällt."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass die Aufgabe leicht ist“ ist ein Nebensatz.",
-            rule:
-                "Die Konjunktion „dass“ leitet einen Nebensatz ein."
-        },
-        {
-            answer: "Verstehen",
-            type: "substantiviertes Verb",
-            explanation:
-                "„Verstehen“ bezeichnet hier eine Tätigkeit.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        }
+    id: 4,
+    parts: [
+        {text:"Der"},
+        {type:"case", hintArticle:"der", hint:"klein", answer:"kleine",
+         wordType:"Adjektiv",
+         explanation:"„kleine“ beschreibt den Hund.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Hund läuft nach Hause, weil"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Wetter“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"schön", answer:"schöne",
+         wordType:"Adjektiv",
+         explanation:"„schöne“ beschreibt das Wetter.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Wetter besser wird."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 5
-===================================================== */
-
+/* 5 */
 {
-    sentences: [
-        {
-            text: "Emma freut sich über"
-        },
-        {
-            type: "case",
-            word: "schön",
-            article: "etwas"
-        },
-        {
-            text: ","
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "ihre Freundin sie besucht."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "Schönes",
-            type: "substantiviertes Adjektiv",
-            explanation:
-                "Nach „etwas“ wird das Adjektiv „schön“ substantiviert.",
-            rule:
-                "Adjektive nach „etwas“ werden großgeschrieben."
-        },
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass ihre Freundin sie besucht“ ist ein Nebensatz.",
-            rule:
-                "„dass“ leitet einen Nebensatz ein."
-        }
+    id: 5,
+    parts: [
+        {text:"Mia sagt"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"Die Konjunktion „dass“ wird mit ss geschrieben."},
+        {text:"sie morgen kommt, obwohl"},
+        {type:"case", hintArticle:"das", hint:"reisen", answer:"Reisen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Reisen“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"normalerweise"},
+        {type:"case", hintArticle:"das", hint:"anstrengend", answer:"anstrengend",
+         wordType:"Adjektiv",
+         explanation:"„anstrengend“ beschreibt das Reisen.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"ist."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 6
-===================================================== */
-
+/* 6 */
 {
-    sentences: [
-        {
-            text: "Ich glaube,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "Paul heute kommt,"
-        },
-        {
-            text: "obwohl"
-        },
-        {
-            type: "case",
-            word: "warten",
-            article: "das"
-        },
-        {
-            text: "lange dauert."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass Paul heute kommt“ ist ein Nebensatz.",
-            rule:
-                "„dass“ leitet einen Nebensatz ein."
-        },
-        {
-            answer: "Warten",
-            type: "substantiviertes Verb",
-            explanation:
-                "„Warten“ bezeichnet hier eine Tätigkeit.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        }
+    id: 6,
+    parts: [
+        {text:"Ich hoffe"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird als Konjunktion mit ss geschrieben."},
+        {text:"du Erfolg hast, weil"},
+        {type:"case", hintArticle:"das", hint:"üben", answer:"Üben",
+         wordType:"substantiviertes Verb",
+         explanation:"„Üben“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"sehr"},
+        {type:"case", hintArticle:"das", hint:"wichtig", answer:"wichtig",
+         wordType:"Adjektiv",
+         explanation:"„wichtig“ beschreibt das Üben.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"ist."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 7
-===================================================== */
-
+/* 7 */
 {
-    sentences: [
-        {
-            text: "Das"
-        },
-        {
-            type: "case",
-            word: "neue",
-            article: "das"
-        },
-        {
-            text: "Buch gefällt mir,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "es spannend geschrieben ist."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "Neue",
-            type: "Adjektiv",
-            explanation:
-                "„neue“ beschreibt das Nomen „Buch“.",
-            rule:
-                "Adjektive werden kleingeschrieben, wenn sie ein Nomen beschreiben."
-        },
-        {
-            answer: "das",
-            type: "Relativpronomen",
-            explanation:
-                "„das“ bezieht sich auf „Buch“ und kann durch „welches“ ersetzt werden.",
-            rule:
-                "Das Relativpronomen „das“ wird mit einem einfachen s geschrieben."
-        }
+    id: 7,
+    parts: [
+        {text:"Das"},
+        {type:"case", hintArticle:"das", hint:"neu", answer:"neue",
+         wordType:"Adjektiv",
+         explanation:"„neue“ beschreibt das Buch.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Buch gefällt mir, obwohl"},
+        {type:"dasdass", answer:"das",
+         wordType:"Relativpronomen",
+         explanation:"„das“ bezieht sich auf „Buch“ und kann durch „welches“ ersetzt werden.",
+         rule:"Das Relativpronomen „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"lesen", answer:"Lesen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Lesen“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"manchmal schwierig ist."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 8
-===================================================== */
-
+/* 8 */
 {
-    sentences: [
-        {
-            text: "Tom weiß"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "seine Schwester morgen kommt,"
-        },
-        {
-            text: "weil"
-        },
-        {
-            type: "case",
-            word: "feiern",
-            article: "das"
-        },
-        {
-            text: "geplant ist."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass seine Schwester morgen kommt“ ist ein Nebensatz.",
-            rule:
-                "„dass“ leitet einen Nebensatz ein."
-        },
-        {
-            answer: "Feiern",
-            type: "substantiviertes Verb",
-            explanation:
-                "„Feiern“ bezeichnet eine Tätigkeit.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        }
+    id: 8,
+    parts: [
+        {text:"Paul findet"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird als Konjunktion mit ss geschrieben."},
+        {text:"der Film spannend ist, weil"},
+        {type:"case", hintArticle:"das", hint:"sehen", answer:"Sehen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Sehen“ wird hier als Nomen gebraucht.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"besonders"},
+        {type:"case", hintArticle:"das", hint:"spannend", answer:"spannend",
+         wordType:"Adjektiv",
+         explanation:"„spannend“ beschreibt das Sehen.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"ist."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 9
-===================================================== */
-
+/* 9 */
 {
-    sentences: [
-        {
-            text: "Beim"
-        },
-        {
-            type: "case",
-            word: "lesen",
-            article: "das"
-        },
-        {
-            text: "lernt man viel,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "man regelmäßig übt."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "Lesen",
-            type: "substantiviertes Verb",
-            explanation:
-                "„Lesen“ steht nach „beim“ und wird als Nomen gebraucht.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        },
-        {
-            answer: "wenn",
-            type: "Konjunktion",
-            explanation:
-                "Hier müsste eigentlich „wenn“ stehen. Deshalb ist diese Aufgabe nicht für das/dass geeignet."
-        }
+    id: 9,
+    parts: [
+        {text:"Nach dem"},
+        {type:"case", hintArticle:"das", hint:"essen", answer:"Essen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Essen“ steht nach „dem“ und wird als Nomen gebraucht.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"gehen wir hinaus, weil"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Wetter“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"schön", answer:"schöne",
+         wordType:"Adjektiv",
+         explanation:"„schöne“ beschreibt das Wetter.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Wetter lockt."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 10
-===================================================== */
-
+/* 10 */
 {
-    sentences: [
-        {
-            text: "Ich hoffe,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "du die Prüfung schaffst,"
-        },
-        {
-            text: "denn"
-        },
-        {
-            type: "case",
-            word: "lernen",
-            article: "das"
-        },
-        {
-            text: "hilft dir."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass du die Prüfung schaffst“ ist ein Nebensatz.",
-            rule:
-                "„dass“ leitet einen Nebensatz ein."
-        },
-        {
-            answer: "Lernen",
-            type: "substantiviertes Verb",
-            explanation:
-                "„Lernen“ bezeichnet eine Tätigkeit.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        }
+    id: 10,
+    parts: [
+        {text:"Anna weiß"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird als Konjunktion mit ss geschrieben."},
+        {text:"ihr Bruder kommt, obwohl"},
+        {type:"case", hintArticle:"das", hint:"warten", answer:"Warten",
+         wordType:"substantiviertes Verb",
+         explanation:"„Warten“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"für ihn"},
+        {type:"case", hintArticle:"das", hint:"langweilig", answer:"langweilig",
+         wordType:"Adjektiv",
+         explanation:"„langweilig“ beschreibt das Warten.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"ist."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 11
-===================================================== */
-
+/* 11 */
 {
-    sentences: [
-        {
-            text: "Das"
-        },
-        {
-            type: "case",
-            word: "alte",
-            article: "das"
-        },
-        {
-            text: "Fahrrad steht dort,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "mein Bruder es reparieren will."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "alte",
-            type: "Adjektiv",
-            explanation:
-                "„alte“ beschreibt das Nomen „Fahrrad“.",
-            rule:
-                "Adjektive werden kleingeschrieben, wenn sie ein Nomen näher beschreiben."
-        },
-        {
-            answer: "das",
-            type: "Relativpronomen",
-            explanation:
-                "„das“ bezieht sich auf das Fahrrad.",
-            rule:
-                "Das Relativpronomen „das“ wird mit einem einfachen s geschrieben."
-        }
+    id: 11,
+    parts: [
+        {text:"Das"},
+        {type:"case", hintArticle:"das", hint:"beste", answer:"Beste",
+         wordType:"substantiviertes Adjektiv",
+         explanation:"„Beste“ wird hier wie ein Nomen gebraucht.",
+         rule:"Substantivierte Adjektive werden großgeschrieben."},
+        {text:"kommt noch, obwohl"},
+        {type:"dasdass", answer:"das",
+         wordType:"Relativpronomen",
+         explanation:"„das“ bezieht sich auf „Beste“.",
+         rule:"Das Relativpronomen „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"wichtig", answer:"Wichtige",
+         wordType:"substantiviertes Adjektiv",
+         explanation:"„Wichtige“ wird wie ein Nomen gebraucht.",
+         rule:"Substantivierte Adjektive werden großgeschrieben."},
+        {text:"noch fehlt."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 12
-===================================================== */
-
+/* 12 */
 {
-    sentences: [
-        {
-            text: "Wir wissen,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "die Mannschaft gewinnt,"
-        },
-        {
-            text: "wenn"
-        },
-        {
-            type: "case",
-            word: "trainieren",
-            article: "das"
-        },
-        {
-            text: "gut vorbereitet ist."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass die Mannschaft gewinnt“ ist ein Nebensatz.",
-            rule:
-                "„dass“ leitet einen Nebensatz ein."
-        },
-        {
-            answer: "Trainieren",
-            type: "substantiviertes Verb",
-            explanation:
-                "„Trainieren“ wird als Nomen verwendet.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        }
+    id: 12,
+    parts: [
+        {text:"Die"},
+        {type:"case", hintArticle:"die", hint:"alt", answer:"alte",
+         wordType:"Adjektiv",
+         explanation:"„alte“ beschreibt die Schule.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Schule wird renoviert, weil"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Gebäude“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"gebäude", answer:"Gebäude",
+         wordType:"Nomen",
+         explanation:"„Gebäude“ ist ein Nomen.",
+         rule:"Nomen werden großgeschrieben."},
+        {text:"sehr alt ist."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 13
-===================================================== */
-
+/* 13 */
 {
-    sentences: [
-        {
-            text: "Nichts"
-        },
-        {
-            type: "case",
-            word: "neues",
-            article: "nichts"
-        },
-        {
-            text: "passiert heute,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "die Klasse auf Ausflug ist."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "Neues",
-            type: "substantiviertes Adjektiv",
-            explanation:
-                "Nach „nichts“ wird „neues“ wie ein Nomen gebraucht.",
-            rule:
-                "Adjektive nach „nichts“ werden großgeschrieben."
-        },
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass die Klasse auf Ausflug ist“ ist ein Nebensatz.",
-            rule:
-                "„dass“ leitet einen Nebensatz ein."
-        }
+    id: 13,
+    parts: [
+        {text:"Der Lehrer erklärt"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird als Konjunktion mit ss geschrieben."},
+        {text:"die Aufgabe leicht ist, weil"},
+        {type:"case", hintArticle:"das", hint:"verstehen", answer:"Verstehen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Verstehen“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"leicht", answer:"leicht",
+         wordType:"Adjektiv",
+         explanation:"„leicht“ beschreibt das Verstehen.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"fällt."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 14
-===================================================== */
-
+/* 14 */
 {
-    sentences: [
-        {
-            text: "Mia sagt,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "ihr Bruder hilft,"
-        },
-        {
-            text: "weil"
-        },
-        {
-            type: "case",
-            word: "aufräumen",
-            article: "das"
-        },
-        {
-            text: "gemeinsam schneller geht."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass ihr Bruder hilft“ ist ein Nebensatz.",
-            rule:
-                "„dass“ leitet einen Nebensatz ein."
-        },
-        {
-            answer: "Aufräumen",
-            type: "substantiviertes Verb",
-            explanation:
-                "„Aufräumen“ bezeichnet hier eine Tätigkeit.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        }
+    id: 14,
+    parts: [
+        {text:"Lena mag"},
+        {type:"case", hintArticle:"das", hint:"schön", answer:"Schönes",
+         wordType:"substantiviertes Adjektiv",
+         explanation:"Nach „etwas“ wird „schön“ substantiviert.",
+         rule:"Adjektive nach „etwas“ werden großgeschrieben."},
+        {text:"an der Stadt, weil"},
+        {type:"dasdass", answer:"sie",
+         wordType:"Pronomen",
+         explanation:"Hier wäre „sie“ passend; diese Lücke ist absichtlich keine das/dass-Lücke."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"spazieren", answer:"Spazieren",
+         wordType:"substantiviertes Verb",
+         explanation:"„Spazieren“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"viel Spaß macht."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 15
-===================================================== */
-
+/* 15 */
 {
-    sentences: [
-        {
-            text: "Der"
-        },
-        {
-            type: "case",
-            word: "kleine",
-            article: "der"
-        },
-        {
-            text: "Hund bellt,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "jemand an der Tür steht."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "kleine",
-            type: "Adjektiv",
-            explanation:
-                "„kleine“ beschreibt den Hund.",
-            rule:
-                "Adjektive werden kleingeschrieben, wenn sie ein Nomen beschreiben."
-        },
-        {
-            answer: "weil",
-            type: "Konjunktion",
-            explanation:
-                "Hier wäre „weil“ die passende Konjunktion. Diese Aufgabe ist deshalb nicht für das/dass geeignet."
-        }
+    id: 15,
+    parts: [
+        {text:"Beim"},
+        {type:"case", hintArticle:"das", hint:"lernen", answer:"Lernen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Lernen“ steht nach „beim“.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"merkt Jonas,"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird mit ss geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"regelmäßig", answer:"regelmäßige",
+         wordType:"Adjektiv",
+         explanation:"„regelmäßige“ beschreibt das Üben.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Üben hilft."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 16
-===================================================== */
-
+/* 16 */
 {
-    sentences: [
-        {
-            text: "Das"
-        },
-        {
-            type: "case",
-            word: "beste",
-            article: "das"
-        },
-        {
-            text: "kommt noch,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "wir gerade erst anfangen."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "Beste",
-            type: "substantiviertes Adjektiv",
-            explanation:
-                "„Beste“ wird hier wie ein Nomen gebraucht.",
-            rule:
-                "Substantivierte Adjektive werden großgeschrieben."
-        },
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass wir gerade erst anfangen“ ist ein Nebensatz.",
-            rule:
-                "„dass“ leitet einen Nebensatz ein."
-        }
+    id: 16,
+    parts: [
+        {text:"Der"},
+        {type:"case", hintArticle:"der", hint:"freundlich", answer:"freundliche",
+         wordType:"Adjektiv",
+         explanation:"„freundliche“ beschreibt den Mann.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Mann lächelt, weil"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Kind“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"klein", answer:"kleine",
+         wordType:"Adjektiv",
+         explanation:"„kleine“ beschreibt das Kind.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Kind winkt."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 17
-===================================================== */
-
+/* 17 */
 {
-    sentences: [
-        {
-            text: "Paul findet"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "das neue Spiel spannend ist,"
-        },
-        {
-            text: "weil"
-        },
-        {
-            type: "case",
-            word: "spielen",
-            article: "das"
-        },
-        {
-            text: "viel Spaß macht."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass das neue Spiel spannend ist“ ist ein Nebensatz.",
-            rule:
-                "„dass“ leitet einen Nebensatz ein."
-        },
-        {
-            answer: "Spielen",
-            type: "substantiviertes Verb",
-            explanation:
-                "„Spielen“ bezeichnet eine Tätigkeit.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        }
+    id: 17,
+    parts: [
+        {text:"Wir wissen"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird als Konjunktion mit ss geschrieben."},
+        {text:"die Prüfung bald kommt, deshalb"},
+        {type:"case", hintArticle:"das", hint:"lernen", answer:"Lernen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Lernen“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"sicher", answer:"sicher",
+         wordType:"Adjektiv",
+         explanation:"„sicher“ beschreibt das Lernen.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"sein sollte."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 18
-===================================================== */
-
+/* 18 */
 {
-    sentences: [
-        {
-            text: "Ich mag"
-        },
-        {
-            type: "case",
-            word: "gut",
-            article: "etwas"
-        },
-        {
-            text: "an diesem Buch,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "es lustige Figuren enthält."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "Gutes",
-            type: "substantiviertes Adjektiv",
-            explanation:
-                "Nach „etwas“ wird „gut“ substantiviert.",
-            rule:
-                "Adjektive nach „etwas“ werden großgeschrieben."
-        },
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass es lustige Figuren enthält“ ist ein Nebensatz.",
-            rule:
-                "„dass“ leitet einen Nebensatz ein."
-        }
+    id: 18,
+    parts: [
+        {text:"Der"},
+        {type:"case", hintArticle:"der", hint:"frisch", answer:"frische",
+         wordType:"Adjektiv",
+         explanation:"„frische“ beschreibt den Kuchen.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Kuchen schmeckt gut, obwohl"},
+        {type:"dasdass", answer:"das",
+         wordType:"Relativpronomen",
+         explanation:"„das“ bezieht sich auf den Kuchen.",
+         rule:"Das Relativpronomen „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"backen", answer:"Backen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Backen“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"lange dauert."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 19
-===================================================== */
-
+/* 19 */
 {
-    sentences: [
-        {
-            text: "Nach dem"
-        },
-        {
-            type: "case",
-            word: "essen",
-            article: "das"
-        },
-        {
-            text: "gehen wir spazieren,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "die Sonne scheint."
-        }
-    ],
-
-    answers: [
-        {
-            answer: "Essen",
-            type: "substantiviertes Verb",
-            explanation:
-                "„Essen“ steht nach „dem“ und wird als Nomen gebraucht.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        },
-        {
-            answer: "weil",
-            type: "Konjunktion",
-            explanation:
-                "Hier wäre „weil“ die passende Konjunktion. Diese Aufgabe ist deshalb nicht für das/dass geeignet."
-        }
+    id: 19,
+    parts: [
+        {text:"Ich freue mich über"},
+        {type:"case", hintArticle:"etwas", hint:"neu", answer:"Neues",
+         wordType:"substantiviertes Adjektiv",
+         explanation:"Nach „etwas“ wird „neu“ substantiviert.",
+         rule:"Adjektive nach „etwas“ werden großgeschrieben."},
+        {text:", weil"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Buch“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"lesen", answer:"Lesen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Lesen“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"mir Spaß macht."}
     ]
 },
 
-
-/* =====================================================
-   RUNDE 20
-===================================================== */
-
+/* 20 */
 {
-    sentences: [
-        {
-            text: "Ich bin überzeugt,"
-        },
-        {
-            type: "dasdass"
-        },
-        {
-            text: "du die Aufgabe schaffst,"
-        },
-        {
-            text: "wenn"
-        },
-        {
-            type: "case",
-            word: "üben",
-            article: "das"
-        },
-        {
-            text: "weiterhilft."
-        }
-    ],
+    id: 20,
+    parts: [
+        {text:"Das"},
+        {type:"case", hintArticle:"das", hint:"wichtig", answer:"Wichtige",
+         wordType:"substantiviertes Adjektiv",
+         explanation:"„Wichtige“ wird wie ein Nomen gebraucht.",
+         rule:"Substantivierte Adjektive werden großgeschrieben."},
+        {text:"ist, dass"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet einen Nebensatz ein.",
+         rule:"„dass“ wird als Konjunktion mit ss geschrieben."},
+        {text:"wir"},
+        {type:"case", hintArticle:"das", hint:"gemeinsam", answer:"gemeinsam",
+         wordType:"Adjektiv/Adverb",
+         explanation:"„gemeinsam“ beschreibt, wie wir etwas tun.",
+         rule:"Adjektive und Adverbien werden kleingeschrieben."},
+        {text:"lernen."}
+    ]
+},
 
-    answers: [
-        {
-            answer: "dass",
-            type: "Konjunktion",
-            explanation:
-                "„dass du die Aufgabe schaffst“ ist ein Nebensatz.",
-            rule:
-                "„dass“ leitet einen Nebensatz ein."
-        },
-        {
-            answer: "Üben",
-            type: "substantiviertes Verb",
-            explanation:
-                "„Üben“ bezeichnet hier eine Tätigkeit.",
-            rule:
-                "Substantivierte Verben werden großgeschrieben."
-        }
+/* 21 */
+{
+    id: 21,
+    parts: [
+        {text:"Nach dem"},
+        {type:"case", hintArticle:"das", hint:"schwimmen", answer:"Schwimmen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Schwimmen“ steht nach „dem“.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"sind wir müde, weil"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Training“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"intensiv", answer:"intensive",
+         wordType:"Adjektiv",
+         explanation:"„intensive“ beschreibt das Training.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Training anstrengend war."}
+    ]
+},
+
+/* 22 */
+{
+    id: 22,
+    parts: [
+        {text:"Sophie sagt"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird als Konjunktion mit ss geschrieben."},
+        {text:"sie gern malt, weil"},
+        {type:"case", hintArticle:"das", hint:"malen", answer:"Malen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Malen“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"kreativ", answer:"kreativ",
+         wordType:"Adjektiv",
+         explanation:"„kreativ“ beschreibt das Malen.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"ist."}
+    ]
+},
+
+/* 23 */
+{
+    id: 23,
+    parts: [
+        {text:"Der"},
+        {type:"case", hintArticle:"der", hint:"jung", answer:"junge",
+         wordType:"Adjektiv",
+         explanation:"„junge“ beschreibt den Spieler.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Spieler trainiert täglich, damit"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Training“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"regelmäßig", answer:"regelmäßige",
+         wordType:"Adjektiv",
+         explanation:"„regelmäßige“ beschreibt das Training.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Training Wirkung zeigt."}
+    ]
+},
+
+/* 24 */
+{
+    id: 24,
+    parts: [
+        {text:"Wir freuen uns über"},
+        {type:"case", hintArticle:"etwas", hint:"gut", answer:"Gutes",
+         wordType:"substantiviertes Adjektiv",
+         explanation:"Nach „etwas“ wird „gut“ substantiviert.",
+         rule:"Adjektive nach „etwas“ werden großgeschrieben."},
+        {text:", obwohl"},
+        {type:"dasdass", answer:"das",
+         wordType:"Relativpronomen",
+         explanation:"„das“ bezieht sich auf etwas Gutes.",
+         rule:"Das Relativpronomen „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"wichtig", answer:"Wichtige",
+         wordType:"substantiviertes Adjektiv",
+         explanation:"„Wichtige“ wird wie ein Nomen gebraucht.",
+         rule:"Substantivierte Adjektive werden großgeschrieben."},
+        {text:"noch fehlt."}
+    ]
+},
+
+/* 25 */
+{
+    id: 25,
+    parts: [
+        {text:"Beim"},
+        {type:"case", hintArticle:"das", hint:"üben", answer:"Üben",
+         wordType:"substantiviertes Verb",
+         explanation:"„Üben“ steht nach „beim“.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"merkt man,"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird mit ss geschrieben."},
+        {text:"die Regeln"},
+        {type:"case", hintArticle:"die", hint:"leicht", answer:"leicht",
+         wordType:"Adjektiv",
+         explanation:"„leicht“ beschreibt die Regeln.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"werden."}
+    ]
+},
+
+/* 26 */
+{
+    id: 26,
+    parts: [
+        {text:"Das"},
+        {type:"case", hintArticle:"das", hint:"schwierig", answer:"Schwierige",
+         wordType:"substantiviertes Adjektiv",
+         explanation:"„Schwierige“ wird wie ein Nomen gebraucht.",
+         rule:"Substantivierte Adjektive werden großgeschrieben."},
+        {text:"ist geschafft, wenn"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Ziel“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"groß", answer:"große",
+         wordType:"Adjektiv",
+         explanation:"„große“ beschreibt das Ziel.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Ziel erreicht ist."}
+    ]
+},
+
+/* 27 */
+{
+    id: 27,
+    parts: [
+        {text:"Max glaubt"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird als Konjunktion mit ss geschrieben."},
+        {text:"er die Aufgabe schafft, obwohl"},
+        {type:"case", hintArticle:"das", hint:"lösen", answer:"Lösen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Lösen“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"der Aufgabe"},
+        {type:"case", hintArticle:"das", hint:"schwierig", answer:"schwierig",
+         wordType:"Adjektiv",
+         explanation:"„schwierig“ beschreibt das Lösen.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"ist."}
+    ]
+},
+
+/* 28 */
+{
+    id: 28,
+    parts: [
+        {text:"Die"},
+        {type:"case", hintArticle:"die", hint:"neu", answer:"neue",
+         wordType:"Adjektiv",
+         explanation:"„neue“ beschreibt die Aufgabe.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Aufgabe macht Spaß, weil"},
+        {type:"dasdass", answer:"das",
+         wordType:"Relativpronomen",
+         explanation:"„das“ bezieht sich auf die Aufgabe.",
+         rule:"Das Relativpronomen „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"lösen", answer:"Lösen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Lösen“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"spannend ist."}
+    ]
+},
+
+/* 29 */
+{
+    id: 29,
+    parts: [
+        {text:"Ich weiß"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird mit ss geschrieben."},
+        {text:"du das schaffst, weil"},
+        {type:"case", hintArticle:"das", hint:"wiederholen", answer:"Wiederholen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Wiederholen“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"sehr"},
+        {type:"case", hintArticle:"das", hint:"hilfreich", answer:"hilfreich",
+         wordType:"Adjektiv",
+         explanation:"„hilfreich“ beschreibt das Wiederholen.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"ist."}
+    ]
+},
+
+/* 30 */
+{
+    id: 30,
+    parts: [
+        {text:"Nach dem"},
+        {type:"case", hintArticle:"das", hint:"arbeiten", answer:"Arbeiten",
+         wordType:"substantiviertes Verb",
+         explanation:"„Arbeiten“ steht nach „dem“.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"bin ich müde, obwohl"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Arbeiten“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"gemeinsam", answer:"gemeinsame",
+         wordType:"Adjektiv",
+         explanation:"„gemeinsame“ beschreibt das Arbeiten.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Arbeiten Spaß macht."}
+    ]
+},
+
+/* 31 */
+{
+    id: 31,
+    parts: [
+        {text:"Der"},
+        {type:"case", hintArticle:"der", hint:"laut", answer:"laute",
+         wordType:"Adjektiv",
+         explanation:"„laute“ beschreibt den Hund.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Hund bellt, weil"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Fenster“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"offen", answer:"offene",
+         wordType:"Adjektiv",
+         explanation:"„offene“ beschreibt das Fenster.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Fenster offen ist."}
+    ]
+},
+
+/* 32 */
+{
+    id: 32,
+    parts: [
+        {text:"Lukas sagt"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird mit ss geschrieben."},
+        {text:"er gerne liest, weil"},
+        {type:"case", hintArticle:"das", hint:"lesen", answer:"Lesen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Lesen“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"entspannend", answer:"entspannend",
+         wordType:"Adjektiv",
+         explanation:"„entspannend“ beschreibt das Lesen.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"ist."}
+    ]
+},
+
+/* 33 */
+{
+    id: 33,
+    parts: [
+        {text:"Etwas"},
+        {type:"case", hintArticle:"etwas", hint:"besonders", answer:"Besonderes",
+         wordType:"substantiviertes Adjektiv",
+         explanation:"Nach „etwas“ wird das Adjektiv substantiviert.",
+         rule:"Adjektive nach „etwas“ werden großgeschrieben."},
+        {text:"erwartet uns, obwohl"},
+        {type:"dasdass", answer:"das",
+         wordType:"Relativpronomen",
+         explanation:"„das“ bezieht sich auf „etwas Besonderes“.",
+         rule:"Das Relativpronomen „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"vorbereiten", answer:"Vorbereiten",
+         wordType:"substantiviertes Verb",
+         explanation:"„Vorbereiten“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"Zeit braucht."}
+    ]
+},
+
+/* 34 */
+{
+    id: 34,
+    parts: [
+        {text:"Wir merken"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird mit ss geschrieben."},
+        {text:"die Aufgabe leichter wird, wenn"},
+        {type:"case", hintArticle:"das", hint:"üben", answer:"Üben",
+         wordType:"substantiviertes Verb",
+         explanation:"„Üben“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"regelmäßig", answer:"regelmäßig",
+         wordType:"Adjektiv/Adverb",
+         explanation:"„regelmäßig“ beschreibt, wie geübt wird.",
+         rule:"Adjektive und Adverbien werden kleingeschrieben."},
+        {text:"stattfindet."}
+    ]
+},
+
+/* 35 */
+{
+    id: 35,
+    parts: [
+        {text:"Das"},
+        {type:"case", hintArticle:"das", hint:"schwierig", answer:"Schwierige",
+         wordType:"substantiviertes Adjektiv",
+         explanation:"„Schwierige“ wird als Nomen gebraucht.",
+         rule:"Substantivierte Adjektive werden großgeschrieben."},
+        {text:"an der Aufgabe ist, dass"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird als Konjunktion mit ss geschrieben."},
+        {text:"man"},
+        {type:"case", hintArticle:"das", hint:"genau", answer:"genau",
+         wordType:"Adjektiv/Adverb",
+         explanation:"„genau“ beschreibt, wie man arbeiten muss.",
+         rule:"Adverbien werden kleingeschrieben."},
+        {text:"arbeiten muss."}
+    ]
+},
+
+/* 36 */
+{
+    id: 36,
+    parts: [
+        {text:"Der"},
+        {type:"case", hintArticle:"der", hint:"neu", answer:"neue",
+         wordType:"Adjektiv",
+         explanation:"„neue“ beschreibt den Schüler.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Schüler zeigt"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Heft“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"ordentlich", answer:"ordentliche",
+         wordType:"Adjektiv",
+         explanation:"„ordentliche“ beschreibt das Heft.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Heft."}
+    ]
+},
+
+/* 37 */
+{
+    id: 37,
+    parts: [
+        {text:"Ich finde"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird mit ss geschrieben."},
+        {text:"Deutsch interessant ist, weil"},
+        {type:"case", hintArticle:"das", hint:"lernen", answer:"Lernen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Lernen“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"abwechslungsreich", answer:"abwechslungsreich",
+         wordType:"Adjektiv",
+         explanation:"„abwechslungsreich“ beschreibt das Lernen.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"ist."}
+    ]
+},
+
+/* 38 */
+{
+    id: 38,
+    parts: [
+        {text:"Zum"},
+        {type:"case", hintArticle:"das", hint:"lernen", answer:"Lernen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Lernen“ steht nach „zum“.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"braucht man Zeit, damit"},
+        {type:"dasdass", answer:"das",
+         wordType:"Artikel",
+         explanation:"„das“ gehört zum Nomen „Wissen“.",
+         rule:"Der Artikel „das“ wird mit einem einfachen s geschrieben."},
+        {text:""},
+        {type:"case", hintArticle:"das", hint:"neue", answer:"neue",
+         wordType:"Adjektiv",
+         explanation:"„neue“ beschreibt das Wissen.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"Wissen entsteht."}
+    ]
+},
+
+/* 39 */
+{
+    id: 39,
+    parts: [
+        {text:"Maria weiß"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird mit ss geschrieben."},
+        {text:"sie die Lösung kennt, obwohl"},
+        {type:"case", hintArticle:"das", hint:"erklären", answer:"Erklären",
+         wordType:"substantiviertes Verb",
+         explanation:"„Erklären“ bezeichnet eine Tätigkeit.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"noch"},
+        {type:"case", hintArticle:"das", hint:"schwierig", answer:"schwierig",
+         wordType:"Adjektiv",
+         explanation:"„schwierig“ beschreibt das Erklären.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"ist."}
+    ]
+},
+
+/* 40 */
+{
+    id: 40,
+    parts: [
+        {text:"Nach dem"},
+        {type:"case", hintArticle:"das", hint:"wiederholen", answer:"Wiederholen",
+         wordType:"substantiviertes Verb",
+         explanation:"„Wiederholen“ steht nach „dem“ und wird als Nomen gebraucht.",
+         rule:"Substantivierte Verben werden großgeschrieben."},
+        {text:"merkt man"},
+        {type:"dasdass", answer:"dass",
+         wordType:"Konjunktion",
+         explanation:"„dass“ leitet den Nebensatz ein.",
+         rule:"„dass“ wird als Konjunktion mit ss geschrieben."},
+        {text:"die Regeln"},
+        {type:"case", hintArticle:"die", hint:"sicher", answer:"sicher",
+         wordType:"Adjektiv",
+         explanation:"„sicher“ beschreibt die Regeln.",
+         rule:"Adjektive werden kleingeschrieben."},
+        {text:"sitzen."}
     ]
 }
 
 ];
+
+
+/* =========================================================
+   VARIABLEN
+========================================================= */
+
+let selectedTasks = [];
+
+let currentRound = 0;
+
+let totalPoints = 0;
+
+let roundPoints = 0;
+
+let currentTask = null;
+
+
+/* =========================================================
+   AUFGABEN MISCHEN
+========================================================= */
+
+function shuffle(array) {
+
+    const result = [...array];
+
+    for (
+        let i = result.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+        [
+            result[i],
+            result[j]
+        ] =
+        [
+            result[j],
+            result[i]
+        ];
+    }
+
+    return result;
+}
+
+
+/* =========================================================
+   NEUEN AUFGABENSATZ ERSTELLEN
+
+   Es werden 20 Aufgaben aus dem Pool ausgewählt.
+
+   Die zuletzt verwendeten Aufgaben werden über
+   sessionStorage gespeichert.
+
+   Dadurch werden beim Neustart möglichst neue Aufgaben
+   verwendet.
+========================================================= */
+
+function createNewExerciseSet() {
+
+    let oldIds = [];
+
+    try {
+
+        oldIds =
+            JSON.parse(
+                sessionStorage.getItem(
+                    "deutschUsedTasks"
+                )
+            ) || [];
+
+    } catch(e) {
+
+        oldIds = [];
+
+    }
+
+
+    let available =
+        taskPool.filter(
+            task => !oldIds.includes(task.id)
+        );
+
+
+    /*
+       Wenn weniger als 20 neue Aufgaben übrig sind,
+       wird der alte Pool wieder verwendet.
+    */
+
+    if (available.length < 20) {
+
+        available =
+            taskPool;
+
+        oldIds = [];
+
+    }
+
+
+    selectedTasks =
+        shuffle(available).slice(0, 20);
+
+
+    const newIds =
+        selectedTasks.map(
+            task => task.id
+        );
+
+
+    try {
+
+        sessionStorage.setItem(
+            "deutschUsedTasks",
+            JSON.stringify(
+                newIds
+            )
+        );
+
+    } catch(e) {
+
+        /* Falls sessionStorage nicht verfügbar ist,
+           funktioniert die Übung trotzdem. */
+
+    }
+
+
+    currentRound = 0;
+
+    totalPoints = 0;
+
+}
+
+
+/* =========================================================
+   RUNDENPUNKTE
+========================================================= */
+
+function createDots() {
+
+    const container =
+        document.getElementById(
+            "roundDots"
+        );
+
+    container.innerHTML = "";
+
+
+    for (
+        let i = 0;
+        i < 20;
+        i++
+    ) {
+
+        const dot =
+            document.createElement(
+                "div"
+            );
+
+        dot.className = "dot";
+
+
+        if (
+            i < currentRound
+        ) {
+
+            dot.classList.add(
+                "done"
+            );
+
+        }
+
+
+        if (
+            i === currentRound
+        ) {
+
+            dot.classList.add(
+                "current"
+            );
+
+        }
+
+
+        dot.textContent =
+            i + 1;
+
+
+        container.appendChild(
+            dot
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RUNDE ANZEIGEN
+========================================================= */
+
+function showRound() {
+
+    currentTask =
+        selectedTasks[
+            currentRound
+        ];
+
+
+    document.getElementById(
+        "roundTitle"
+    ).textContent =
+        "Runde " +
+        (currentRound + 1);
+
+
+    document.getElementById(
+        "roundText"
+    ).textContent =
+        "Runde " +
+        (currentRound + 1) +
+        " von 20";
+
+
+    document.getElementById(
+        "scoreText"
+    ).textContent =
+        "Punkte: " +
+        totalPoints;
+
+
+    document.getElementById(
+        "progressBar"
+    ).style.width =
+        (
+            (currentRound + 1)
+            / 20
+            * 100
+        ) + "%";
+
+
+    createDots();
+
+
+    const sentenceContainer =
+        document.getElementById(
+            "sentences"
+        );
+
+    sentenceContainer.innerHTML = "";
+
+
+    let sentence =
+        document.createElement(
+            "div"
+        );
+
+    sentence.className =
+        "sentence";
+
+
+    let blankNumber = 0;
+
+
+    currentTask.parts.forEach(
+        part => {
+
+
+            /* Normale Wörter */
+
+            if (
+                part.type === undefined
+            ) {
+
+                sentence.appendChild(
+                    document.createTextNode(
+                        " " + part.text
+                    )
+                );
+
+                return;
+
+            }
+
+
+            /* Lücke */
+
+            const input =
+                document.createElement(
+                    "input"
+                );
+
+            input.className =
+                "answer";
+
+            input.dataset.index =
+                blankNumber;
+
+            input.autocomplete =
+                "off";
+
+            input.spellcheck =
+                false;
+
+
+            /* Hinweis für Groß-/Kleinschreibung */
+
+            if (
+                part.type === "case"
+            ) {
+
+                const hint =
+                    document.createElement(
+                        "span"
+                    );
+
+                hint.className =
+                    "hint";
+
+
+                hint.innerHTML =
+                    "(" +
+                    "<span class='article'>" +
+                    part.hintArticle +
+                    "</span> " +
+                    part.hint +
+                    ")";
+
+
+                sentence.appendChild(
+                    hint
+                );
+
+            }
+
+
+            sentence.appendChild(
+                input
+            );
+
+
+            blankNumber++;
+
+        }
+    );
+
+
+    sentenceContainer.appendChild(
+        sentence
+    );
+
+
+    document.getElementById(
+        "feedback"
+    ).className =
+        "feedback";
+
+
+    document.getElementById(
+        "feedback"
+    ).innerHTML =
+        "";
+
+
+    document.getElementById(
+        "checkButton"
+    ).style.display =
+        "inline-block";
+
+
+    document.getElementById(
+        "nextButton"
+    ).style.display =
+        "none";
+
+}
+
+
+/* =========================================================
+   ANTWORTEN PRÜFEN
+========================================================= */
+
+function checkAnswers() {
+
+    const inputs =
+        document.querySelectorAll(
+            "#sentences input"
+        );
+
+
+    let correct = 0;
+
+    let explanations = [];
+
+
+    inputs.forEach(
+        (input, index) => {
+
+
+            const answer =
+                getAnswerForBlank(
+                    index
+                );
+
+
+            const userAnswer =
+                input.value.trim();
+
+
+            input.classList.remove(
+                "correct",
+                "wrong"
+            );
+
+
+            if (
+                userAnswer.toLowerCase() ===
+                answer.answer.toLowerCase()
+            ) {
+
+                input.classList.add(
+                    "correct"
+                );
+
+                correct++;
+
+            }
+
+            else {
+
+                input.classList.add(
+                    "wrong"
+                );
+
+
+                explanations.push(
+
+                    "<div class='explanation'>" +
+
+                    "<strong>" +
+                    "Lücke " +
+                    (index + 1) +
+                    "</strong>" +
+
+                    "<br><br>" +
+
+                    "Deine Antwort: " +
+
+                    "<strong>" +
+                    (
+                        userAnswer ||
+                        "keine Antwort"
+                    ) +
+                    "</strong>" +
+
+                    "<br>" +
+
+                    "Richtig ist: " +
+
+                    "<strong>" +
+                    answer.answer +
+                    "</strong>" +
+
+                    "<br><br>" +
+
+                    "<strong>" +
+                    "Wortart:"
+                    +
+                    "</strong> " +
+
+                    answer.wordType +
+
+                    "<br><br>" +
+
+                    answer.explanation +
+
+                    "<div class='rule'>" +
+
+                    "<strong>" +
+                    "📌 Rechtschreibregel:"
+                    +
+                    "</strong>" +
+
+                    "<br>" +
+
+                    answer.rule +
+
+                    "</div>" +
+
+                    "</div>"
+
+                );
+
+            }
+
+        }
+    );
+
+
+    roundPoints =
+        correct;
+
+
+    totalPoints +=
+        correct;
+
+
+    document.getElementById(
+        "scoreText"
+    ).textContent =
+        "Punkte: " +
+        totalPoints;
+
+
+    const feedback =
+        document.getElementById(
+            "feedback"
+        );
+
+
+    /* ALLES RICHTIG */
+
+    if (
+        correct === inputs.length
+    ) {
+
+        feedback.className =
+            "feedback success";
+
+
+        feedback.innerHTML = `
+
+            <strong>
+                🌟 Fantastisch!
+                Alles richtig!
+            </strong>
+
+            <br><br>
+
+            Du hast alle
+            <strong>
+                ${inputs.length}
+            </strong>
+            Lücken richtig gelöst.
+
+            <br><br>
+
+            💪 Du wendest die
+            Rechtschreibregeln schon
+            sehr sicher an!
+
+        `;
+
+    }
+
+
+    /* TEILWEISE RICHTIG */
+
+    else if (
+        correct > 0
+    ) {
+
+        feedback.className =
+            "feedback partial";
+
+
+        feedback.innerHTML = `
+
+            <strong>
+                👍 Gut gemacht!
+            </strong>
+
+            <br><br>
+
+            Du hast
+            <strong>
+                ${correct} von ${inputs.length}
+            </strong>
+            Antworten richtig.
+
+            <br><br>
+
+            Schau dir die Erklärungen
+            bei den falschen Antworten an.
+
+            ${explanations.join("")}
+
+        `;
+
+    }
+
+
+    /* ALLES FALSCH */
+
+    else {
+
+        feedback.className =
+            "feedback error";
+
+
+        feedback.innerHTML = `
+
+            <strong>
+                💡 Noch nicht richtig –
+                aber nicht aufgeben!
+            </strong>
+
+            <br><br>
+
+            Lies die Erklärungen
+            aufmerksam durch.
+
+            <br>
+
+            Danach kannst du die
+            falschen Antworten verbessern.
+
+            ${explanations.join("")}
+
+        `;
+
+    }
+
+
+    document.getElementById(
+        "checkButton"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "nextButton"
+    ).style.display =
+        "inline-block";
+
+
+    if (
+        currentRound === 19
+    ) {
+
+        document.getElementById(
+            "nextButton"
+        ).textContent =
+            "🏆 Gesamtauswertung";
+
+    }
+
+    else {
+
+        document.getElementById(
+            "nextButton"
+        ).textContent =
+            "Nächste Runde →";
+
+    }
+
+}
+
+
+/* =========================================================
+   ANTWORT ZU EINER LÜCKE ERMITTELN
+========================================================= */
+
+function getAnswerForBlank(
+    blankIndex
+) {
+
+    const blanks =
+        currentTask.parts.filter(
+            part =>
+                part.type === "case" ||
+                part.type === "dasdass"
+        );
+
+
+    return blanks[
+        blankIndex
+    ];
+
+}
+
+
+/* =========================================================
+   NÄCHSTE RUNDE
+========================================================= */
+
+function nextRound() {
+
+    if (
+        currentRound === 19
+    ) {
+
+        showResult();
+
+        return;
+
+    }
+
+
+    currentRound++;
+
+    showRound();
+
+}
+
+
+/* =========================================================
+   GESAMTAUSWERTUNG
+========================================================= */
+
+function showResult() {
+
+    document.getElementById(
+        "exerciseCard"
+    ).style.display =
+        "none";
+
+
+    document.querySelector(
+        ".progress-box"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "result"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        totalPoints +
+        " von 80 Punkten";
+
+
+    let message = "";
+
+
+    if (
+        totalPoints >= 72
+    ) {
+
+        message = `
+
+            🌟 <strong>Fantastische Leistung!</strong>
+
+            <br><br>
+
+            Du hast die Regeln zur
+            Groß- und Kleinschreibung
+            und zu <strong>das/dass</strong>
+            sehr sicher angewendet.
+
+            <br><br>
+
+            Deine Rechtschreibung ist
+            richtig stark.
+            Darauf kannst du stolz sein! 💪
+
+        `;
+
+    }
+
+    else if (
+        totalPoints >= 60
+    ) {
+
+        message = `
+
+            🎉 <strong>Sehr gut gemacht!</strong>
+
+            <br><br>
+
+            Du beherrschst schon viele
+            wichtige Rechtschreibregeln.
+
+            <br><br>
+
+            Mit ein wenig weiterer Übung
+            wirst du noch sicherer.
+
+        `;
+
+    }
+
+    else if (
+        totalPoints >= 48
+    ) {
+
+        message = `
+
+            👍 <strong>Gut gearbeitet!</strong>
+
+            <br><br>
+
+            Du hast schon viele Regeln
+            richtig angewendet.
+
+            <br><br>
+
+            Schau dir besonders die
+            Erklärungen zu deinen Fehlern an.
+            So kannst du beim nächsten
+            Durchgang noch mehr Punkte sammeln.
+
+        `;
+
+    }
+
+    else {
+
+        message = `
+
+            💪 <strong>Gut, dass du geübt hast!</strong>
+
+            <br><br>
+
+            Groß- und Kleinschreibung sowie
+            „das“ und „dass“ können knifflig sein.
+
+            <br><br>
+
+            Lies dir die Erklärungen
+            aufmerksam durch und probiere
+            die neuen Aufgaben noch einmal.
+
+            <br><br>
+
+            Du wirst Schritt für Schritt besser!
+
+        `;
+
+    }
+
+
+    document.getElementById(
+        "finalMessage"
+    ).innerHTML =
+        message;
+
+}
+
+
+/* =========================================================
+   NEUSTART
+
+   Hier wird NICHT einfach wieder Runde 1 gestartet.
+
+   Stattdessen werden 20 neue Aufgaben aus dem
+   Aufgabenpool ausgewählt.
+========================================================= */
+
+function restart() {
+
+    createNewExerciseSet();
+
+
+    document.getElementById(
+        "exerciseCard"
+    ).style.display =
+        "block";
+
+
+    document.querySelector(
+        ".progress-box"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "result"
+    ).style.display =
+        "none";
+
+
+    showRound();
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+createNewExerciseSet();
+
+showRound();
+
+</script>
+
+</body>
+</html>
