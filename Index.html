@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Deutsch – Hier wirst du fit!</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Trebuchet MS", Arial, sans-serif;
+
+            /* Hintergrundbild */
+            background-image:
+                linear-gradient(
+                    rgba(15, 25, 45, 0.55),
+                    rgba(15, 25, 45, 0.55)
+                ),
+                url("https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=2000&q=85");
+
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            color: white;
+        }
+
+        .startseite {
+            width: 90%;
+            max-width: 900px;
+            text-align: center;
+
+            background: rgba(255, 255, 255, 0.13);
+            backdrop-filter: blur(8px);
+
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+
+            padding: 60px 40px;
+
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.35);
+        }
+
+        .emoji {
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: clamp(2.3rem, 6vw, 4.5rem);
+            line-height: 1.1;
+            margin-bottom: 25px;
+
+            text-shadow:
+                3px 3px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .highlight {
+            display: block;
+            margin-top: 10px;
+        }
+
+        .untertitel {
+            font-size: 1.3rem;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        .button {
+            display: inline-block;
+
+            padding: 16px 35px;
+
+            background: white;
+            color: #315c9b;
+
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+
+            border-radius: 50px;
+
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+
+            transition: all 0.25s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-4px) scale(1.03);
+
+            box-shadow:
+                0 12px 28px rgba(0, 0, 0, 0.35);
+
+            background: #e9f4ff;
+        }
+
+        .info {
+            margin-top: 35px;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 600px) {
+
+            .startseite {
+                padding: 40px 20px;
+            }
+
+            .emoji {
+                font-size: 3.5rem;
+            }
+
+            .untertitel {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="startseite">
+
+        <div class="emoji">📚 ✏️</div>
+
+        <h1>
+            Übungen für Deutsch
+            <span class="highlight">– hier wirst du fit!! 💪</span>
+        </h1>
+
+        <p class="untertitel">
+            Teste dein Wissen, übe wichtige Regeln
+            und werde Schritt für Schritt besser!
+        </p>
+
+        <!--
+            Hier später den Link zu deiner Übungsseite eintragen.
+            Beispiel:
+            href="deutsch/"
+        -->
+        <a class="button" href="deutsch/">
+            🚀 Los geht's!
+        </a>
+
+        <p class="info">
+            Deutsch üben • Wissen testen • besser werden
+        </p>
+
+    </main>
+
+</body>
+</html>
