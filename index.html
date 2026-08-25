@@ -1,160 +1,1548 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Deutsch – Hier wirst du fit!</title>
+<title>Deutsch-Training – Groß-/Kleinschreibung und das/dass</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: "Trebuchet MS", Arial, sans-serif;
+        background: linear-gradient(135deg, #dff1ff, #eee5ff);
+        color: #263238;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    /* Kopfbereich */
+    header {
+        background: white;
+        border-radius: 22px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        margin-bottom: 18px;
+    }
+
+    header h1 {
+        margin: 0 0 8px;
+        color: #315c9b;
+        font-size: 2rem;
+    }
+
+    header p {
+        margin: 5px;
+    }
+
+    /* Fortschritt */
+    .progress-box {
+        background: white;
+        border-radius: 18px;
+        padding: 15px 20px;
+        margin-bottom: 18px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    }
+
+    .progress-info {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        color: #315c9b;
+        margin-bottom: 8px;
+    }
+
+    .progress {
+        width: 100%;
+        height: 14px;
+        background: #e1e7ef;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 5%;
+        background: linear-gradient(90deg, #4c8edb, #7664d9);
+        transition: width 0.4s;
+    }
+
+    /* Aufgabenkarte */
+    .card {
+        background: white;
+        border-radius: 24px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.09);
+    }
+
+    .card h2 {
+        color: #315c9b;
+        margin-top: 0;
+    }
+
+    .instruction {
+        background: #eef6ff;
+        border-left: 5px solid #4c8edb;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 25px;
+        line-height: 1.6;
+    }
+
+    .sentence {
+        font-size: 1.18rem;
+        line-height: 2.5;
+        margin: 15px 0;
+    }
+
+    /* Vorgegebene Wörter */
+    .hint {
+        color: #666;
+        font-size: 0.95rem;
+        margin-right: 3px;
+    }
+
+    /* Eingabefelder */
+    input {
+        width: 110px;
+        padding: 8px;
+        border: 2px solid #b8c9dc;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 1rem;
+        text-align: center;
+        background: #fafcff;
+        transition: 0.2s;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #4c8edb;
+        box-shadow: 0 0 0 3px rgba(76,142,219,0.15);
+    }
+
+    input.correct {
+        border-color: #42a65c;
+        background: #edf9ef;
+    }
+
+    input.wrong {
+        border-color: #db5b5b;
+        background: #fff0f0;
+    }
+
+    /* Buttons */
+    button {
+        border: none;
+        border-radius: 12px;
+        padding: 13px 24px;
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .check {
+        background: #4c8edb;
+        color: white;
+    }
+
+    .check:hover {
+        background: #3978c0;
+        transform: translateY(-1px);
+    }
+
+    .next {
+        display: none;
+        background: #52a86d;
+        color: white;
+        margin-left: 8px;
+    }
+
+    .next:hover {
+        background: #418c59;
+    }
+
+    /* Rückmeldung */
+    .feedback {
+        display: none;
+        margin-top: 25px;
+        padding: 18px;
+        border-radius: 14px;
+        line-height: 1.6;
+    }
+
+    .feedback.success {
+        display: block;
+        background: #eaf8ee;
+        border: 2px solid #79c58b;
+        color: #246437;
+    }
+
+    .feedback.partial {
+        display: block;
+        background: #fff8e6;
+        border: 2px solid #e5c766;
+        color: #71590c;
+    }
+
+    .feedback.error {
+        display: block;
+        background: #fff0f0;
+        border: 2px solid #e29a9a;
+        color: #7b2929;
+    }
+
+    /* Erklärungen */
+    .explanation {
+        background: white;
+        border-left: 4px solid #db7777;
+        border-radius: 9px;
+        padding: 12px 15px;
+        margin-top: 12px;
+    }
+
+    .explanation strong {
+        color: #7b2929;
+    }
+
+    .rule {
+        margin-top: 6px;
+        padding: 8px;
+        background: #fff8f8;
+        border-radius: 6px;
+    }
+
+    /* Ergebnis */
+    .result {
+        display: none;
+        background: white;
+        border-radius: 24px;
+        padding: 35px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.09);
+    }
+
+    .result h2 {
+        color: #315c9b;
+        font-size: 2.2rem;
+    }
+
+    .final-score {
+        font-size: 3.5rem;
+        font-weight: bold;
+        color: #4c8edb;
+        margin: 20px;
+    }
+
+    .final-message {
+        max-width: 650px;
+        margin: auto;
+        font-size: 1.15rem;
+        line-height: 1.7;
+    }
+
+    .restart {
+        margin-top: 25px;
+        background: #7664d9;
+        color: white;
+    }
+
+    .restart:hover {
+        background: #6150bc;
+    }
+
+    /* Runde-Punkte */
+    .round-dots {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        justify-content: center;
+        margin-top: 12px;
+    }
+
+    .dot {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #dce3eb;
+        font-size: 0.7rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dot.current {
+        background: #4c8edb;
+        color: white;
+    }
+
+    .dot.done {
+        background: #61b477;
+        color: white;
+    }
+
+    @media(max-width:600px) {
+
+        header h1 {
+            font-size: 1.5rem;
         }
 
-        body {
-            min-height: 100vh;
-            font-family: "Trebuchet MS", Arial, sans-serif;
-
-            /* Hintergrundbild */
-            background-image:
-                linear-gradient(
-                    rgba(15, 25, 45, 0.55),
-                    rgba(15, 25, 45, 0.55)
-                ),
-                url("https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=2000&q=85");
-
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            color: white;
+        .card {
+            padding: 20px;
         }
 
-        .startseite {
-            width: 90%;
-            max-width: 900px;
-            text-align: center;
-
-            background: rgba(255, 255, 255, 0.13);
-            backdrop-filter: blur(8px);
-
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 30px;
-
-            padding: 60px 40px;
-
-            box-shadow:
-                0 20px 50px rgba(0, 0, 0, 0.35);
+        .sentence {
+            font-size: 1.05rem;
         }
 
-        .emoji {
-            font-size: 4.5rem;
-            margin-bottom: 20px;
+        input {
+            width: 90px;
         }
-
-        h1 {
-            font-size: clamp(2.3rem, 6vw, 4.5rem);
-            line-height: 1.1;
-            margin-bottom: 25px;
-
-            text-shadow:
-                3px 3px 8px rgba(0, 0, 0, 0.5);
-        }
-
-        .highlight {
-            display: block;
-            margin-top: 10px;
-        }
-
-        .untertitel {
-            font-size: 1.3rem;
-            margin-bottom: 35px;
-            line-height: 1.6;
-        }
-
-        .button {
-            display: inline-block;
-
-            padding: 16px 35px;
-
-            background: white;
-            color: #315c9b;
-
-            text-decoration: none;
-            font-size: 1.2rem;
-            font-weight: bold;
-
-            border-radius: 50px;
-
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-
-            transition: all 0.25s ease;
-        }
-
-        .button:hover {
-            transform: translateY(-4px) scale(1.03);
-
-            box-shadow:
-                0 12px 28px rgba(0, 0, 0, 0.35);
-
-            background: #e9f4ff;
-        }
-
-        .info {
-            margin-top: 35px;
-            font-size: 0.95rem;
-            opacity: 0.9;
-        }
-
-        @media (max-width: 600px) {
-
-            .startseite {
-                padding: 40px 20px;
-            }
-
-            .emoji {
-                font-size: 3.5rem;
-            }
-
-            .untertitel {
-                font-size: 1.05rem;
-            }
-        }
-    </style>
+    }
+</style>
 </head>
 
 <body>
 
-    <main class="startseite">
+<div class="container">
 
-        <div class="emoji">📚 ✏️</div>
+<header>
+    <h1>📚 Deutsch-Training</h1>
+    <p><strong>Groß- und Kleinschreibung & „das“ oder „dass“</strong></p>
+    <p>Zeig, was du kannst! 💪</p>
+</header>
 
-        <h1>
-            Übungen für Deutsch
-            <span class="highlight">– hier wirst du fit!! 💪</span>
-        </h1>
+<div class="progress-box">
 
-        <p class="untertitel">
-            Teste dein Wissen, übe wichtige Regeln
-            und werde Schritt für Schritt besser!
-        </p>
+    <div class="progress-info">
+        <span id="roundText">Runde 1 von 20</span>
+        <span id="scoreText">Punkte: 0</span>
+    </div>
 
-    
-        <a class="button" href="Uebungen/">
-            🚀 Los geht's!
-        </a>
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
 
-        <p class="info">
-            Deutsch üben • Wissen testen • besser werden
-        </p>
+    <div class="round-dots" id="roundDots"></div>
 
-    </main>
+</div>
+
+
+<div class="card" id="exerciseCard">
+
+    <h2 id="roundTitle">Runde 1</h2>
+
+    <div class="instruction">
+        <strong>So geht's:</strong><br>
+        Fülle die vier Lücken aus.
+        Bei Wörtern in Klammern achtest du auf die
+        <strong>Groß- und Kleinschreibung</strong>.
+        Bei <strong>das / dass</strong> musst du entscheiden,
+        welches Wort richtig ist.
+    </div>
+
+    <div id="sentences"></div>
+
+    <button class="check" id="checkButton" onclick="checkAnswers()">
+        ✓ Antworten prüfen
+    </button>
+
+    <button class="next" id="nextButton" onclick="nextRound()">
+        Nächste Runde →
+    </button>
+
+    <div id="feedback" class="feedback"></div>
+
+</div>
+
+
+<!-- Endauswertung -->
+
+<div class="result" id="result">
+
+    <h2>🎉 Geschafft!</h2>
+
+    <p>Du hast alle 20 Runden bearbeitet!</p>
+
+    <div class="final-score" id="finalScore">
+        0 / 80
+    </div>
+
+    <div class="final-message" id="finalMessage"></div>
+
+    <button class="restart" onclick="restart()">
+        🔄 Noch einmal üben
+    </button>
+
+</div>
+
+</div>
+
+
+<script>
+
+/*
+==========================================================
+20 RUNDEN
+==========================================================
+Jede Runde enthält zwei Sätze und genau vier Lücken.
+Bei Groß-/Kleinschreibung steht die Grundform in Klammern.
+==========================================================
+*/
+
+const rounds = [
+
+{
+    sentences: [
+        'Das (lesen) macht mir Spaß.',
+        'Ich weiß, (dass) du gerne Bücher liest.'
+    ],
+
+    answers: [
+        {
+            answer: "Lesen",
+            type: "substantiviertes Verb",
+            rule: "Verben werden großgeschrieben, wenn sie als Nomen gebraucht werden.",
+            explanation: "„Lesen“ ist hier ein substantiviertes Verb. Es bezeichnet eine Tätigkeit und steht mit dem Artikel „das“."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ ist eine Konjunktion und leitet einen Nebensatz ein.",
+            explanation: "Hier leitet „dass“ den Nebensatz „du gerne Bücher liest“ ein."
+        },
+        {
+            answer: "das",
+            type: "Artikel",
+            rule: "Artikel werden kleingeschrieben.",
+            explanation: "„das“ steht vor einem Nomen und ist hier ein Artikel."
+        },
+        {
+            answer: "Lesen",
+            type: "substantiviertes Verb",
+            rule: "Verben werden großgeschrieben, wenn sie als Nomen gebraucht werden.",
+            explanation: "„Lesen“ wird hier als Nomen verwendet."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Ich finde, (dass) das (lernen) interessant ist.',
+        'Beim (schreiben) brauche ich Ruhe.'
+    ],
+
+    answers: [
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Der Nebensatz lautet „dass das Lernen interessant ist“."
+        },
+        {
+            answer: "Lernen",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Lernen“ ist hier ein Nomen und steht nach dem Artikel „das“."
+        },
+        {
+            answer: "Schreiben",
+            type: "substantiviertes Verb",
+            rule: "Verben werden großgeschrieben, wenn sie als Nomen gebraucht werden.",
+            explanation: "Nach „beim“ steht ein substantiviertes Verb."
+        },
+        {
+            answer: "Schreiben",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Schreiben“ bezeichnet hier eine Tätigkeit und wird deshalb großgeschrieben."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Das (schöne) an Büchern ist, (dass) sie uns in andere Welten führen.',
+        'Ich mag das (lesen) am Abend.'
+    ],
+
+    answers: [
+        {
+            answer: "Schöne",
+            type: "substantiviertes Adjektiv",
+            rule: "Adjektive werden großgeschrieben, wenn sie substantiviert werden.",
+            explanation: "„Schöne“ steht hier stellvertretend für „das Schöne“ und ist deshalb ein substantiviertes Adjektiv."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass“ verbindet hier den Hauptsatz mit dem Nebensatz."
+        },
+        {
+            answer: "Lesen",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Lesen“ ist hier eine Tätigkeit und wird als Nomen verwendet."
+        },
+        {
+            answer: "Lesen",
+            type: "substantiviertes Verb",
+            rule: "Verben werden großgeschrieben, wenn sie als Nomen gebraucht werden.",
+            explanation: "Das Wort steht nach dem Artikel „das“ und wird deshalb großgeschrieben."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Ich hoffe, (dass) du beim (üben) viel lernst.',
+        'Das (wichtigste) ist, (dass) du nicht aufgibst.'
+    ],
+
+    answers: [
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier folgt nach „dass“ ein vollständiger Nebensatz."
+        },
+        {
+            answer: "Üben",
+            type: "substantiviertes Verb",
+            rule: "Nach „beim“ steht ein substantiviertes Verb und wird großgeschrieben.",
+            explanation: "„beim“ ist die Kurzform von „bei dem“. Deshalb wird „Üben“ großgeschrieben."
+        },
+        {
+            answer: "Wichtigste",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Wichtigste“ wird hier wie ein Nomen gebraucht."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass du nicht aufgibst“ ist ein Nebensatz."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Das (gute) an der Übung ist, (dass) du sofort Feedback bekommst.',
+        'Beim (lesen) kann man viel lernen.'
+    ],
+
+    answers: [
+        {
+            answer: "Gute",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Gute“ wird hier wie ein Nomen gebraucht."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass du sofort Feedback bekommst“ ist ein Nebensatz."
+        },
+        {
+            answer: "Lesen",
+            type: "substantiviertes Verb",
+            rule: "Nach „beim“ wird ein substantiviertes Verb großgeschrieben.",
+            explanation: "„beim Lesen“ bedeutet „bei dem Lesen“."
+        },
+        {
+            answer: "lernen",
+            type: "Verb",
+            rule: "Verben werden normalerweise kleingeschrieben.",
+            explanation: "„lernen“ ist hier ein Verb und kein Nomen."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Ich weiß, (dass) (lernen) manchmal anstrengend sein kann.',
+        'Das (üben) hilft dabei, sicherer zu werden.'
+    ],
+
+    answers: [
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Nach „dass“ folgt hier der Nebensatz."
+        },
+        {
+            answer: "Lernen",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Lernen“ ist hier eine Tätigkeit und wird als Nomen gebraucht."
+        },
+        {
+            answer: "Üben",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Üben“ steht nach dem Artikel „das“ und wird deshalb großgeschrieben."
+        },
+        {
+            answer: "sicherer",
+            type: "Adjektiv",
+            rule: "Adjektive werden normalerweise kleingeschrieben.",
+            explanation: "„sicherer“ beschreibt, wie man wird, und ist deshalb ein Adjektiv."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Das (beste) ist, (dass) wir gemeinsam lernen.',
+        'Ich finde, (dass) (üben) wirklich hilft.'
+    ],
+
+    answers: [
+        {
+            answer: "Beste",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Beste“ wird hier als Nomen verwendet."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Der Nebensatz lautet „dass wir gemeinsam lernen“."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ ist eine Konjunktion.",
+            explanation: "Hier wird ein Nebensatz eingeleitet."
+        },
+        {
+            answer: "Üben",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Üben“ wird hier als Nomen verwendet."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Beim (schreiben) merke ich, (dass) ich besser werde.',
+        'Das (wiederholen) der Regeln hilft.'
+    ],
+
+    answers: [
+        {
+            answer: "Schreiben",
+            type: "substantiviertes Verb",
+            rule: "Nach „beim“ wird ein substantiviertes Verb großgeschrieben.",
+            explanation: "„beim Schreiben“ bedeutet „bei dem Schreiben“."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass ich besser werde“ ist ein Nebensatz."
+        },
+        {
+            answer: "Wiederholen",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Wiederholen“ bezeichnet hier eine Tätigkeit."
+        },
+        {
+            answer: "Regeln",
+            type: "Nomen",
+            rule: "Nomen werden großgeschrieben.",
+            explanation: "„Regeln“ ist ein Nomen."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Das (schöne) ist, (dass) man aus Fehlern lernen kann.',
+        'Ich finde, (dass) das (lernen) Spaß machen kann.'
+    ],
+
+    answers: [
+        {
+            answer: "Schöne",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Schöne“ wird hier als Nomen verwendet."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass man aus Fehlern lernen kann“ ist ein Nebensatz."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass das Lernen Spaß machen kann“ ist ein Nebensatz."
+        },
+        {
+            answer: "Lernen",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "Das Wort steht nach dem Artikel „das“."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Ich glaube, (dass) das (lesen) von Büchern wichtig ist.',
+        'Das (wichtigste) ist, (dass) du dranbleibst.'
+    ],
+
+    answers: [
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier wird ein Nebensatz eingeleitet."
+        },
+        {
+            answer: "Lesen",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Lesen“ ist hier eine Tätigkeit und wird als Nomen verwendet."
+        },
+        {
+            answer: "Wichtigste",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Wichtigste“ wird hier wie ein Nomen gebraucht."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass du dranbleibst“ ist ein Nebensatz."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Ich freue mich, (dass) du beim (üben) Spaß hast.',
+        'Das (gute) daran ist, (dass) du immer besser wirst.'
+    ],
+
+    answers: [
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier wird ein Nebensatz eingeleitet."
+        },
+        {
+            answer: "Üben",
+            type: "substantiviertes Verb",
+            rule: "Nach „beim“ wird das Verb großgeschrieben.",
+            explanation: "„beim Üben“ bedeutet „bei dem Üben“."
+        },
+        {
+            answer: "Gute",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Gute“ wird hier wie ein Nomen gebraucht."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass du immer besser wirst“ ist ein Nebensatz."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Das (lesen) macht Spaß, wenn das Buch spannend ist.',
+        'Ich weiß, (dass) du das (lesen) auch magst.'
+    ],
+
+    answers: [
+        {
+            answer: "Lesen",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Lesen“ ist hier eine Tätigkeit."
+        },
+        {
+            answer: "Buch",
+            type: "Nomen",
+            rule: "Nomen werden großgeschrieben.",
+            explanation: "„Buch“ ist ein Nomen."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier beginnt mit „dass“ ein Nebensatz."
+        },
+        {
+            answer: "Lesen",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "Das Wort steht nach dem Artikel „das“."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Beim (wiederholen) merke ich, (dass) ich mir die Regel besser merke.',
+        'Das (wichtige) ist, (dass) man die Regel versteht.'
+    ],
+
+    answers: [
+        {
+            answer: "Wiederholen",
+            type: "substantiviertes Verb",
+            rule: "Nach „beim“ wird ein substantiviertes Verb großgeschrieben.",
+            explanation: "„beim Wiederholen“ bedeutet „bei dem Wiederholen“."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass ich mir die Regel besser merke“ ist ein Nebensatz."
+        },
+        {
+            answer: "Wichtige",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Wichtige“ wird hier als Nomen gebraucht."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier beginnt ein Nebensatz."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Ich hoffe, (dass) das (lernen) dir immer leichter fällt.',
+        'Das (schöne) ist, (dass) du selbstständig üben kannst.'
+    ],
+
+    answers: [
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Nach „dass“ folgt ein Nebensatz."
+        },
+        {
+            answer: "Lernen",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Lernen“ steht nach dem Artikel „das“."
+        },
+        {
+            answer: "Schöne",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Schöne“ wird als Nomen verwendet."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass du selbstständig üben kannst“ ist ein Nebensatz."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Das (beste) am Üben ist, (dass) man Fortschritte sieht.',
+        'Beim (schreiben) merkt man, (dass) man sicherer wird.'
+    ],
+
+    answers: [
+        {
+            answer: "Beste",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Beste“ wird hier als Nomen gebraucht."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier beginnt ein Nebensatz."
+        },
+        {
+            answer: "Schreiben",
+            type: "substantiviertes Verb",
+            rule: "Nach „beim“ wird das substantivierte Verb großgeschrieben.",
+            explanation: "„beim Schreiben“ bedeutet „bei dem Schreiben“."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass man sicherer wird“ ist ein Nebensatz."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Ich finde, (dass) das (üben) mit Beispielen hilfreich ist.',
+        'Das (schwierige) ist, (dass) man manchmal genau hinschauen muss.'
+    ],
+
+    answers: [
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier beginnt mit „dass“ ein Nebensatz."
+        },
+        {
+            answer: "Üben",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Üben“ ist hier eine Tätigkeit."
+        },
+        {
+            answer: "Schwierige",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Schwierige“ wird wie ein Nomen verwendet."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier folgt ein Nebensatz."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Das (gute) ist, (dass) du aus Fehlern lernen kannst.',
+        'Ich bin sicher, (dass) das (wiederholen) dir helfen wird.'
+    ],
+
+    answers: [
+        {
+            answer: "Gute",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Gute“ wird hier als Nomen gebraucht."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier beginnt ein Nebensatz."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier beginnt der Nebensatz „dass das Wiederholen ...“."
+        },
+        {
+            answer: "Wiederholen",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Wiederholen“ wird als Nomen gebraucht."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Beim (lernen) habe ich gemerkt, (dass) ich sicherer werde.',
+        'Das (wichtigste) ist, (dass) man nicht aufgibt.'
+    ],
+
+    answers: [
+        {
+            answer: "Lernen",
+            type: "substantiviertes Verb",
+            rule: "Nach „beim“ wird ein substantiviertes Verb großgeschrieben.",
+            explanation: "„beim Lernen“ bedeutet „bei dem Lernen“."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass ich sicherer werde“ ist ein Nebensatz."
+        },
+        {
+            answer: "Wichtigste",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Wichtigste“ wird wie ein Nomen verwendet."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass man nicht aufgibt“ ist ein Nebensatz."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Ich weiß, (dass) das (lesen) von Geschichten Spaß macht.',
+        'Das (schöne) ist, (dass) man dabei viel lernen kann.'
+    ],
+
+    answers: [
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier wird ein Nebensatz eingeleitet."
+        },
+        {
+            answer: "Lesen",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Lesen“ wird als Nomen gebraucht."
+        },
+        {
+            answer: "Schöne",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Schöne“ wird hier als Nomen verwendet."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier beginnt ein Nebensatz."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Das (üben) lohnt sich, weil man merkt, (dass) man besser wird.',
+        'Ich freue mich, (dass) mir das (schreiben) immer leichter fällt.'
+    ],
+
+    answers: [
+        {
+            answer: "Üben",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Üben“ ist hier ein Nomen und steht nach dem Artikel „das“."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass man besser wird“ ist ein Nebensatz."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier beginnt ein Nebensatz."
+        },
+        {
+            answer: "Schreiben",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Schreiben“ steht nach dem Artikel „das“ und wird deshalb großgeschrieben."
+        }
+    ]
+},
+
+{
+    sentences: [
+        'Das (wichtigste) beim Lernen ist, (dass) du regelmäßig übst.',
+        'Ich denke, (dass) das (lesen) dir helfen wird.'
+    ],
+
+    answers: [
+        {
+            answer: "Wichtigste",
+            type: "substantiviertes Adjektiv",
+            rule: "Substantivierte Adjektive werden großgeschrieben.",
+            explanation: "„Wichtigste“ wird hier als Nomen gebraucht."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "„dass du regelmäßig übst“ ist ein Nebensatz."
+        },
+        {
+            answer: "dass",
+            type: "Konjunktion",
+            rule: "„dass“ leitet einen Nebensatz ein.",
+            explanation: "Hier beginnt ein Nebensatz."
+        },
+        {
+            answer: "Lesen",
+            type: "substantiviertes Verb",
+            rule: "Substantivierte Verben werden großgeschrieben.",
+            explanation: "„Lesen“ wird hier als Nomen gebraucht."
+        }
+    ]
+}
+
+];
+
+
+/* =====================================================
+   VARIABLEN
+===================================================== */
+
+let currentRound = 0;
+let totalPoints = 0;
+
+
+/* =====================================================
+   RUNDE ANZEIGEN
+===================================================== */
+
+function showRound() {
+
+    const round = rounds[currentRound];
+
+    document.getElementById("roundTitle").textContent =
+        "Runde " + (currentRound + 1);
+
+    document.getElementById("roundText").textContent =
+        "Runde " + (currentRound + 1) + " von 20";
+
+    document.getElementById("scoreText").textContent =
+        "Punkte: " + totalPoints;
+
+    document.getElementById("progressBar").style.width =
+        ((currentRound + 1) / 20 * 100) + "%";
+
+    createDots();
+
+    const sentences = document.getElementById("sentences");
+
+    sentences.innerHTML = "";
+
+    let inputNumber = 0;
+
+    round.sentences.forEach(sentence => {
+
+        const div = document.createElement("div");
+        div.className = "sentence";
+
+        /*
+        Wörter in Klammern erkennen
+        */
+
+        const parts = sentence.split(/(\([^)]+\))/g);
+
+        parts.forEach(part => {
+
+            if (part.startsWith("(") && part.endsWith(")")) {
+
+                const word = part.substring(1, part.length - 1);
+
+                const hint = document.createElement("span");
+                hint.className = "hint";
+                hint.textContent = "(" + word + ")";
+
+                div.appendChild(hint);
+
+                const input = document.createElement("input");
+
+                input.type = "text";
+                input.dataset.index = inputNumber;
+                input.autocomplete = "off";
+
+                div.appendChild(input);
+
+                inputNumber++;
+
+            } else {
+
+                div.appendChild(
+                    document.createTextNode(part)
+                );
+
+            }
+        });
+
+        sentences.appendChild(div);
+    });
+
+    document.getElementById("feedback").className = "feedback";
+    document.getElementById("feedback").innerHTML = "";
+
+    document.getElementById("checkButton").style.display =
+        "inline-block";
+
+    document.getElementById("nextButton").style.display =
+        "none";
+}
+
+
+/* =====================================================
+   RUNDE-PUNKTE
+===================================================== */
+
+function createDots() {
+
+    const container = document.getElementById("roundDots");
+
+    container.innerHTML = "";
+
+    for (let i = 0; i < 20; i++) {
+
+        const dot = document.createElement("div");
+
+        dot.className = "dot";
+
+        if (i < currentRound) {
+            dot.classList.add("done");
+        }
+
+        if (i === currentRound) {
+            dot.classList.add("current");
+        }
+
+        dot.textContent = i + 1;
+
+        container.appendChild(dot);
+    }
+}
+
+
+/* =====================================================
+   ANTWORTEN PRÜFEN
+===================================================== */
+
+function checkAnswers() {
+
+    const inputs = document.querySelectorAll("#sentences input");
+
+    const answers = rounds[currentRound].answers;
+
+    let correct = 0;
+
+    let explanations = [];
+
+    inputs.forEach((input, index) => {
+
+        const userAnswer = input.value.trim();
+
+        const correctAnswer =
+            answers[index].answer;
+
+        input.classList.remove("correct", "wrong");
+
+        if (userAnswer === correctAnswer) {
+
+            input.classList.add("correct");
+
+            correct++;
+
+        } else {
+
+            input.classList.add("wrong");
+
+            explanations.push(`
+                <div class="explanation">
+
+                    <strong>Lücke ${index + 1}:</strong>
+
+                    Deine Antwort:
+                    <strong>${userAnswer || "keine Antwort"}</strong>
+
+                    <br>
+
+                    Richtig ist:
+                    <strong>${correctAnswer}</strong>
+
+                    <br><br>
+
+                    <strong>Wortart:</strong>
+                    ${answers[index].type}
+
+                    <br>
+
+                    ${answers[index].explanation}
+
+                    <div class="rule">
+                        <strong>📌 Rechtschreibregel:</strong><br>
+                        ${answers[index].rule}
+                    </div>
+
+                </div>
+            `);
+        }
+    });
+
+    totalPoints += correct;
+
+    document.getElementById("scoreText").textContent =
+        "Punkte: " + totalPoints;
+
+    const feedback =
+        document.getElementById("feedback");
+
+
+    /* ALLE RICHTIG */
+
+    if (correct === 4) {
+
+        feedback.className =
+            "feedback success";
+
+        const positiveMessages = [
+            "🌟 Fantastisch! Alle vier Antworten sind richtig!",
+            "🎉 Super gemacht! Du hast die Regeln sicher angewendet!",
+            "👏 Klasse! Vier von vier – richtig stark!",
+            "💪 Sehr gut! Du wirst immer sicherer!",
+            "⭐ Perfekt! Das war eine tolle Runde!"
+        ];
+
+        feedback.innerHTML = `
+            <strong>
+                ${positiveMessages[currentRound % positiveMessages.length]}
+            </strong>
+            <br><br>
+            Du hast <strong>4 von 4 Punkten</strong> erreicht.
+            Weiter so!
+        `;
+
+    }
+
+    /* TEILWEISE RICHTIG */
+
+    else if (correct > 0) {
+
+        feedback.className =
+            "feedback partial";
+
+        feedback.innerHTML = `
+            <strong>👍 Gut gemacht!</strong><br><br>
+
+            Du hast <strong>${correct} von 4</strong>
+            Antworten richtig.
+
+            <br><br>
+
+            Lies dir die Erklärungen genau durch.
+            So kannst du die Regeln beim nächsten Mal
+            noch sicherer anwenden.
+
+            ${explanations.join("")}
+        `;
+
+    }
+
+    /* NICHTS RICHTIG */
+
+    else {
+
+        feedback.className =
+            "feedback error";
+
+        feedback.innerHTML = `
+            <strong>💡 Nicht aufgeben!</strong><br><br>
+
+            Dieses Thema ist manchmal knifflig.
+            Schau dir die Erklärungen in Ruhe an.
+            Du kannst die Regeln anschließend direkt
+            in der nächsten Runde anwenden.
+
+            ${explanations.join("")}
+        `;
+    }
+
+
+    document.getElementById("checkButton").style.display =
+        "none";
+
+    document.getElementById("nextButton").style.display =
+        "inline-block";
+
+    if (currentRound === 19) {
+
+        document.getElementById("nextButton").textContent =
+            "🏆 Gesamtauswertung";
+
+    } else {
+
+        document.getElementById("nextButton").textContent =
+            "Nächste Runde →";
+    }
+}
+
+
+/* =====================================================
+   NÄCHSTE RUNDE
+===================================================== */
+
+function nextRound() {
+
+    if (currentRound === 19) {
+
+        showResult();
+
+        return;
+    }
+
+    currentRound++;
+
+    showRound();
+}
+
+
+/* =====================================================
+   GESAMTAUSWERTUNG
+===================================================== */
+
+function showResult() {
+
+    document.getElementById("exerciseCard").style.display =
+        "none";
+
+    document.querySelector(".progress-box").style.display =
+        "none";
+
+    document.getElementById("result").style.display =
+        "block";
+
+    document.getElementById("finalScore").textContent =
+        totalPoints + " / 80 Punkte";
+
+
+    let message;
+
+
+    if (totalPoints >= 72) {
+
+        message = `
+            🌟 <strong>Fantastische Leistung!</strong><br><br>
+
+            Du hast die Regeln zur Groß- und Kleinschreibung
+            und zu <strong>das / dass</strong> schon sehr sicher
+            angewendet.
+
+            Du kannst wirklich stolz auf dich sein!
+            Deine Rechtschreibkenntnisse sind richtig stark.
+        `;
+
+    }
+
+    else if (totalPoints >= 60) {
+
+        message = `
+            🎉 <strong>Sehr gut gemacht!</strong><br><br>
+
+            Du hast schon sehr viele Regeln sicher beherrscht.
+            Mit ein wenig weiterer Übung wirst du noch sicherer.
+
+            Bleib dran – du bist auf einem richtig guten Weg!
+        `;
+
+    }
+
+    else if (totalPoints >= 45) {
+
+        message = `
+            👍 <strong>Gut gearbeitet!</strong><br><br>
+
+            Du hast schon viele Regeln erkannt.
+            Einige Stellen sind noch knifflig.
+
+            Lies dir die Erklärungen noch einmal durch
+            und probiere die Übungen ruhig noch einmal.
+            Du wirst merken: Mit jedem Durchgang wird es leichter!
+        `;
+
+    }
+
+    else {
+
+        message = `
+            💪 <strong>Gut, dass du geübt hast!</strong><br><br>
+
+            Groß- und Kleinschreibung sowie
+            <strong>das / dass</strong> sind manchmal schwierig.
+
+            Das Wichtigste ist:
+            <strong>Nicht aufgeben!</strong>
+
+            Lies dir die Erklärungen aufmerksam durch
+            und starte einfach noch einmal.
+            Mit Übung wirst du Schritt für Schritt sicherer!
+        `;
+    }
+
+
+    document.getElementById("finalMessage").innerHTML =
+        message;
+}
+
+
+/* =====================================================
+   NEUSTART
+===================================================== */
+
+function restart() {
+
+    currentRound = 0;
+    totalPoints = 0;
+
+    document.getElementById("exerciseCard").style.display =
+        "block";
+
+    document.querySelector(".progress-box").style.display =
+        "block";
+
+    document.getElementById("result").style.display =
+        "none";
+
+    showRound();
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+showRound();
+
+</script>
 
 </body>
 </html>
